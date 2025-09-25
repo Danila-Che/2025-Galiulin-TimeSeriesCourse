@@ -65,9 +65,20 @@ class TimeSeriesKNN:
         dist: distance between the train and test samples
         """
 
-        dist = 0
+        dist_func = None
 
-        # INSERT YOUR CODE
+        if self.metric == 'euclidean':
+            if self.metric_params['normalize']:
+                dist = norm_ED_distance(x_train, x_test)
+            else:
+                dist = ED_distance(x_train, x_test)
+
+        elif self.metric == 'dtw':
+            if self.metric_params['normalize']:
+                x_train = z_normalize(x_train)
+                x_test = z_normalize(x_test)
+                
+            dist = DTW_distance(x_train, x_test, r=self.metric_params['r'])
 
         return dist
 
@@ -85,9 +96,15 @@ class TimeSeriesKNN:
         neighbors: k nearest neighbors (distance between neighbor and test sample, neighbor label) for test sample
         """
 
-        neighbors = []
+        distances = []
 
-        # INSERT YOUR CODE
+        for i in range(len(self.X_train)):
+            dist = self._distance(self.X_train[i], x_test)
+            distances.append((dist, self.Y_train[i]))
+
+        distances.sort(key=lambda x: x[0])
+
+        neighbors = distances[:self.n_neighbors]
 
         return neighbors
 
@@ -107,7 +124,13 @@ class TimeSeriesKNN:
 
         y_pred = []
 
-        # INSERT YOUR CODE
+        for x_test in X_test:
+            neighbors = self._find_neighbors(x_test)
+
+            neighbor_labels = [label for _, label in neighbors]
+
+            pred_label = max(set(neighbor_labels), key=neighbor_labels.count)
+            y_pred.append(pred_label)
 
         return np.array(y_pred)
 
