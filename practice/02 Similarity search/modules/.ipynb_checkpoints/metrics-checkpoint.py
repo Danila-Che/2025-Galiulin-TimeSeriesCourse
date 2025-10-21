@@ -16,9 +16,7 @@ def ED_distance(ts1: np.ndarray, ts2: np.ndarray) -> float:
     ed_dist: euclidean distance between ts1 and ts2
     """
     
-    ed_dist = 0
-
-    # INSERT YOUR CODE
+    ed_dist = np.sqrt(np.sum(np.square(ts1 - ts2)))
 
     return ed_dist
 
@@ -37,9 +35,22 @@ def norm_ED_distance(ts1: np.ndarray, ts2: np.ndarray) -> float:
     norm_ed_dist: normalized Euclidean distance between ts1 and ts2s
     """
 
-    norm_ed_dist = 0
+    n = ts1.shape[0]
 
-    # INSERT YOUR CODE
+    assert n == ts2.shape[0]
+
+    mu1 = np.mean(ts1)
+    mu2 = np.mean(ts2)
+
+    s1 = np.std(ts1)
+    s2 = np.std(ts2)
+
+    if s1 == 0 or s2 == 0:
+        return 0.
+
+    d = np.dot(ts1, ts2)
+    
+    norm_ed_dist = np.sqrt(np.abs(2*n*(1 - (d - n*mu1*mu2) / (n*s1*s2))))
 
     return norm_ed_dist
 
