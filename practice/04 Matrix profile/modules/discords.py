@@ -36,10 +36,10 @@ def top_k_discords(matrix_profile: dict, top_k: int = 3) -> dict:
         if np.isnan(max_dist) or np.isinf(max_dist):
             break
 
+        mp = apply_exclusion_zone(mp, max_idx, excl_zone, np.nan)
+        
         topK_match_results['indices'].append(max_idx)
         topK_match_results['distances'].append(max_dist)
         topK_match_results['nn_indices'].append(mpi[max_idx])
-
-        mp = apply_exclusion_zone(mp, max_idx, excl_zone, np.nan)
 
     return topK_match_results
